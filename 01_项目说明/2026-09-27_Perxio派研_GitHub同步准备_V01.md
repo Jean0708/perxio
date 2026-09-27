@@ -1,4 +1,4 @@
-# GitHub 同步准备 V01
+# GitHub 同步与上线记录 V01
 
 日期：2026-09-27
 
@@ -30,13 +30,21 @@
 - 源码、README、历史记录、截图和 `docs` 发布目录已成功上传至 `https://github.com/Jean0708/perxio`。
 - 本地 `main` 已跟踪 `origin/main`；源码与两份预览产物内容一致。
 
-## 待完成
+## 上线结果
 
 - 已通过连接确认 GitHub 账号为 `Jean0708`。
 - 用户已确认公开仓库 `Jean0708/perxio` 及上传、发布。
 - 远端初始 README 已保留至 `05_归档文件`。
 - 上传工作流因当前 OAuth 登录未包含 workflow 权限被 GitHub 拒绝；采用 `main` 的 `/docs` 分支发布，Actions 配置作为参考移至 `01_项目说明`。
-- 需在目标仓库启用 GitHub Pages 的 Deploy from a branch，选择 main 和 /docs。
-- 浏览器控制连续超时，无法代为修改 Pages 设置；已向用户提供设置页与具体选项。
-- 待用户保存 Pages 设置后检查实际预览链接 `https://jean0708.github.io/perxio/`。
+- 用户已保存 Pages 的分支发布设置，网站上线成功。
+- 在线预览：`https://jean0708.github.io/perxio/`。
+- HTTPS 请求返回 HTTP 200，返回内容与本地 `docs/index.html` 逐字节一致。
+- 线上文件 SHA256：`ca64227a7ff9cf1147f99a5cdb0a9530fd57aca13a4a57103d2bfd46acf582f4`。
+- 使用 Playwright 与本机 Chrome 在线验证加载、语言切换、活动必填校验与创建、H5 预览、同步、清洗、AI 对话和初版结论到报告：通过。
+- 在线 1280×720 和 390×844 布局无文档横向溢出，控制台错误与 HTTP 资源失败均为零。
+- 本次仅更新 README 和本记录；网站仍为 V05，原件与历史资料保持完整。
+
+## 后续更新
+
+- 修改 `index.html` 后运行 `python3 scripts/build.py`，提交 `index.html` 和 `docs` 并推送 `main`；Pages 会更新在线预览。
 - 当前为演示原型，没有真实后端、AI 或数据持久化。

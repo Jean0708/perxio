@@ -20,7 +20,9 @@ python3 -m http.server 8080 --directory _site
 在 GitHub 的 **Settings → Pages → Source** 选择 **Deploy from a branch**，
 分支选择 **main**，目录选择 **/docs**，点击 **Save**。
 设置成功后，`main` 分支中的 `docs` 每次推送更新会自动重新部署。
-预览地址：<https://jean0708.github.io/perxio/>（首次部署成功后可用）。
+预览地址：<https://jean0708.github.io/perxio/>。
+
+已于 2026-09-27 验证上线：页面返回 HTTP 200，内容与本地发布文件一致；主要交互及桌面、手机尺寸检查通过。
 
 GitHub Free 的 Pages 适用于公开仓库；私有仓库需要支持 Pages 的付费套餐。Pages 网站默认公开，即使源仓库是私有的。
 
