@@ -1,0 +1,2379 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Perxio 派研 - 增长活动调研助手平台 V03</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
+
+    :root {
+      --bg: #07080d;
+      --bg-2: #0b0d14;
+      --surface-1: #11131b;
+      --surface-2: #161924;
+      --surface-3: #1c2030;
+      --line: #252b3c;
+      --line-strong: #343d55;
+      --ink: #f4f7fb;
+      --ink-2: #c5ccd8;
+      --ink-3: #858ea3;
+      --ink-4: #596176;
+      --primary: #7c5cff;
+      --primary-2: #a78bfa;
+      --data: #13c9dc;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --coral: #ff6b4a;
+      --lime: #b6f36d;
+      --radius: 8px;
+      --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+      --font: Inter, "SF Pro Display", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(124, 92, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(19, 201, 220, 0.07) 1px, transparent 1px),
+        radial-gradient(circle at 20% 0%, rgba(124, 92, 255, 0.12), transparent 32rem),
+        linear-gradient(180deg, var(--bg), var(--bg-2) 42%, #080a10);
+      background-size: 46px 46px, 46px 46px, auto, auto;
+      min-height: 100vh;
+      letter-spacing: 0;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(120deg, transparent 0%, rgba(19, 201, 220, 0.09) 48%, transparent 54%);
+      transform: translateX(-100%);
+      animation: page-scan 9s linear infinite;
+      opacity: 0.55;
+      z-index: 0;
+    }
+
+    button, input, textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .zh, .en { display: inline; }
+    html[data-lang="en"] .zh { display: none; }
+    html:not([data-lang="en"]) .en { display: none; }
+
+    .page {
+      position: relative;
+      z-index: 1;
+    }
+
+    .liquid-glass {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.018);
+      background-blend-mode: luminosity;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12);
+    }
+
+    .liquid-glass::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.4px;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.46) 0%,
+        rgba(255, 255, 255, 0.15) 20%,
+        rgba(255, 255, 255, 0) 40%,
+        rgba(255, 255, 255, 0) 60%,
+        rgba(255, 255, 255, 0.15) 80%,
+        rgba(255, 255, 255, 0.46) 100%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .global-bar {
+      position: sticky;
+      top: 14px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 20px;
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 10px 16px;
+      border-radius: 999px;
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(167, 139, 250, 0.46);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(124, 92, 255, 0.95), rgba(19, 201, 220, 0.75));
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      white-space: nowrap;
+    }
+
+    .brand-text strong {
+      font-size: 15px;
+      line-height: 1.1;
+    }
+
+    .brand-text span {
+      color: var(--ink-3);
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+      background: rgba(17, 19, 27, 0.72);
+    }
+
+    .site-nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      color: var(--ink-2);
+      font-size: 13px;
+      transition: color .16s ease, background .16s ease;
+    }
+
+    .site-nav a:hover,
+    .site-nav a:focus-visible {
+      background: rgba(255,255,255,0.07);
+      color: var(--ink);
+      outline: none;
+    }
+
+    .bar-actions {
+      justify-self: end;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .lang-switch {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px;
+      min-height: 38px;
+      padding: 4px;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 999px;
+      background: rgba(17, 19, 27, 0.8);
+    }
+
+    .lang-switch button {
+      min-width: 42px;
+      min-height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      color: var(--ink-3);
+      background: transparent;
+      font-size: 12px;
+      transition: color .16s ease, background .16s ease;
+    }
+
+    html:not([data-lang="en"]) .lang-switch button[data-lang-choice="zh"],
+    html[data-lang="en"] .lang-switch button[data-lang-choice="en"] {
+      color: white;
+      background: var(--primary);
+    }
+
+    .ghost-btn,
+    .primary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 650;
+      transition: transform .16s ease, background .16s ease, color .16s ease, border-color .16s ease;
+    }
+
+    .primary-btn {
+      color: white;
+      background: var(--primary);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .primary-btn:hover { background: var(--primary-2); transform: translateY(-1px); }
+    .ghost-btn {
+      color: var(--ink-2);
+      background: rgba(17, 19, 27, 0.72);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .ghost-btn:hover { color: white; border-color: var(--line-strong); transform: translateY(-1px); }
+    .primary-btn:focus-visible,
+    .ghost-btn:focus-visible,
+    .lang-switch button:focus-visible {
+      outline: 2px solid rgba(124, 92, 255, .62);
+      outline-offset: 2px;
+    }
+
+    .section {
+      width: min(1440px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 72px 0;
+    }
+
+    .launch-section {
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+      margin-top: -72px;
+      padding: 124px 0 56px;
+      display: grid;
+      align-items: center;
+      background: #000;
+    }
+
+    .launch-video,
+    .launch-fallback,
+    .launch-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .launch-video {
+      object-fit: cover;
+      object-position: center bottom;
+      opacity: 0;
+      z-index: 0;
+    }
+
+    .launch-fallback {
+      z-index: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        radial-gradient(ellipse at 70% 18%, rgba(19, 201, 220, 0.2), transparent 38rem),
+        radial-gradient(ellipse at 18% 22%, rgba(124, 92, 255, 0.24), transparent 30rem),
+        #000;
+      background-size: 48px 48px, 48px 48px, auto, auto, auto;
+    }
+
+    .launch-overlay {
+      z-index: 1;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.62), rgba(0,0,0,0.2) 42%, #07080d 100%),
+        linear-gradient(90deg, rgba(0,0,0,0.84), rgba(0,0,0,0.38) 54%, rgba(0,0,0,0.68));
+    }
+
+    .launch-inner {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: minmax(0, 0.96fr) minmax(360px, 0.7fr);
+      gap: clamp(28px, 4vw, 56px);
+      align-items: center;
+      width: min(1240px, calc(100vw - 40px));
+      margin: 0 auto;
+    }
+
+    .launch-copy {
+      min-width: 0;
+      max-width: 680px;
+    }
+
+    .launch-title {
+      max-width: 9em;
+      margin-top: 20px;
+      color: #f8fbff;
+      font-size: clamp(42px, 6vw, 72px);
+      line-height: 1.08;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    .launch-title .en {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: 0;
+    }
+
+    .launch-ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .launch-ctas .primary-btn,
+    .launch-ctas .ghost-btn {
+      min-height: 46px;
+      border-radius: 999px;
+      padding: 0 20px;
+    }
+
+    .launch-stack {
+      display: grid;
+      gap: 12px;
+      max-width: 540px;
+      padding: 16px;
+      border-radius: 18px;
+    }
+
+    .launch-stack .micro-card {
+      min-height: 96px;
+      grid-template-columns: 56px 1fr;
+      gap: 15px;
+      padding: 15px;
+      border-color: rgba(255,255,255,0.13);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.035);
+    }
+
+    .launch-stack .micro-index {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      font-size: 17px;
+      letter-spacing: 0;
+    }
+
+    .launch-stack .micro-card strong {
+      font-size: 15px;
+      line-height: 1.38;
+    }
+
+    .launch-stack .micro-card span {
+      margin-top: 7px;
+      font-size: 13px;
+      line-height: 1.58;
+    }
+
+    .launch-section .intro-meta {
+      position: static;
+      margin-top: 12px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .72s ease, transform .72s ease;
+    }
+
+    [data-reveal].is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .asset-pin {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 9px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 999px;
+      color: rgba(255,255,255,0.55);
+      background: rgba(0,0,0,0.26);
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .launch-asset-pin {
+      position: absolute;
+      right: 24px;
+      bottom: 24px;
+      z-index: 3;
+    }
+
+    .workspace-section {
+      min-height: auto;
+      padding-top: 72px;
+    }
+
+    .workspace-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 28px;
+      margin-bottom: 18px;
+    }
+
+    .workspace-heading h2 {
+      margin-top: 14px;
+      max-width: 680px;
+      font-size: clamp(26px, 2.4vw, 36px);
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    .workspace-heading p {
+      max-width: 520px;
+      color: var(--ink-2);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .hero-section {
+      padding-top: 28px;
+      min-height: calc(100vh - 70px);
+      display: grid;
+      align-items: center;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.32fr) minmax(720px, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .intro-panel {
+      position: relative;
+      overflow: hidden;
+      min-height: 620px;
+      padding: 28px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(28,32,48,0.92), rgba(12,14,22,0.96)),
+        repeating-linear-gradient(90deg, transparent, transparent 13px, rgba(255,255,255,0.03) 14px);
+    }
+
+    .intro-panel::after,
+    .app-shell::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -2px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--data), var(--primary), transparent);
+      transform: translateX(-35%);
+      animation: rail 4.8s ease-in-out infinite;
+      opacity: 0.9;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 24px;
+      padding: 0 9px;
+      border: 1px solid rgba(19, 201, 220, 0.28);
+      border-radius: 999px;
+      color: var(--data);
+      background: rgba(19, 201, 220, 0.08);
+      font-size: 11px;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      max-width: 9.5em;
+      margin-top: 24px;
+      font-size: clamp(36px, 4.8vw, 64px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .intro-copy {
+      margin-top: 18px;
+      max-width: 34rem;
+      color: var(--ink-2);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .intro-stack {
+      display: grid;
+      gap: 10px;
+      margin-top: 34px;
+    }
+
+    .micro-card {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      min-height: 72px;
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .micro-index {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      color: #071015;
+      background: var(--lime);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .micro-card:nth-child(2) .micro-index { background: var(--data); }
+    .micro-card:nth-child(3) .micro-index { background: var(--coral); }
+
+    .micro-card strong {
+      display: block;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.28;
+    }
+
+    .micro-card span {
+      display: block;
+      margin-top: 5px;
+      color: var(--ink-3);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .intro-meta {
+      position: absolute;
+      right: 22px;
+      bottom: 22px;
+      left: 22px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .intro-meta div {
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .intro-meta b {
+      display: block;
+      font-size: 22px;
+      line-height: 1.05;
+    }
+
+    .intro-meta span {
+      display: block;
+      margin-top: 6px;
+      color: var(--ink-3);
+      font-size: 11px;
+    }
+
+    .app-shell {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 212px 1fr;
+      min-height: 620px;
+      border: 1px solid rgba(255,255,255,0.11);
+      border-radius: var(--radius);
+      background: rgba(9, 11, 17, 0.88);
+    }
+
+    .app-sidebar {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 18px;
+      padding: 18px 12px;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      background: rgba(12, 14, 22, 0.9);
+    }
+
+    .workspace-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 6px;
+      color: var(--ink-3);
+      font-size: 11px;
+    }
+
+    .module-nav {
+      display: grid;
+      gap: 5px;
+      overflow: hidden;
+    }
+
+    .module-nav button {
+      display: grid;
+      grid-template-columns: 26px 1fr auto;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 7px;
+      color: var(--ink-3);
+      background: transparent;
+      text-align: left;
+      transition: color .16s ease, background .16s ease;
+    }
+
+    .module-nav button:hover,
+    .module-nav button.active {
+      color: var(--ink);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .module-nav i {
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      color: var(--data);
+      font-style: normal;
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(19, 201, 220, 0.08);
+    }
+
+    .module-nav b {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .module-nav span {
+      min-width: 26px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(124,92,255,0.2);
+      color: var(--primary-2);
+      font-size: 10px;
+      text-align: center;
+    }
+
+    .sidebar-foot {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .sidebar-foot strong {
+      font-size: 12px;
+    }
+
+    .sidebar-foot span {
+      color: var(--ink-3);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .app-main {
+      min-width: 0;
+      padding: 18px;
+    }
+
+    .app-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 42px;
+      margin-bottom: 16px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink-3);
+      font-size: 12px;
+    }
+
+    .top-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: min(360px, 46%);
+      min-height: 38px;
+      padding: 0 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      color: var(--ink-3);
+      background: rgba(255,255,255,0.035);
+      font-size: 12px;
+    }
+
+    .console-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(312px, 0.8fr);
+      gap: 14px;
+    }
+
+    .panel {
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--radius);
+      background: rgba(17, 19, 27, 0.82);
+    }
+
+    .panel-pad { padding: 16px; }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .panel-title::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 99px;
+      background: var(--data);
+      box-shadow: 0 0 18px rgba(19, 201, 220, 0.8);
+    }
+
+    .panel-link {
+      color: var(--ink-3);
+      font-size: 12px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .kpi {
+      min-height: 112px;
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .kpi span {
+      color: var(--ink-3);
+      font-size: 11px;
+    }
+
+    .kpi strong {
+      display: block;
+      margin-top: 12px;
+      font-size: clamp(22px, 2vw, 30px);
+      line-height: 1;
+    }
+
+    .kpi em {
+      display: inline-flex;
+      margin-top: 10px;
+      color: var(--success);
+      font-style: normal;
+      font-size: 11px;
+    }
+
+    .campaign-panel {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 14px;
+      align-items: stretch;
+      min-height: 192px;
+    }
+
+    .campaign-title {
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .campaign-desc {
+      margin-top: 10px;
+      color: var(--ink-3);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .stage-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 18px;
+    }
+
+    .stage-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 0 9px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+      color: var(--ink-2);
+      background: rgba(255,255,255,0.04);
+      font-size: 11px;
+    }
+
+    .stage-chip.active {
+      color: #061015;
+      background: var(--lime);
+      border-color: transparent;
+      font-weight: 800;
+    }
+
+    .confidence-ring {
+      display: grid;
+      place-items: center;
+      min-height: 100%;
+      border: 1px solid rgba(19, 201, 220, 0.22);
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(19, 201, 220, 0.08), transparent 64%),
+        rgba(255,255,255,0.035);
+      padding: 16px;
+    }
+
+    .confidence-ring div {
+      position: relative;
+      display: grid;
+      grid-template-rows: auto auto;
+      align-content: center;
+      justify-items: center;
+      gap: 8px;
+      width: 132px;
+      height: 132px;
+      border-radius: 999px;
+      background: conic-gradient(from -90deg, var(--data) 0 82%, rgba(255,255,255,0.12) 82% 100%);
+      text-align: center;
+    }
+
+    .confidence-ring div::before {
+      content: "";
+      position: absolute;
+      inset: 13px;
+      border-radius: inherit;
+      background: var(--bg-2);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .confidence-ring div > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .confidence-ring strong {
+      display: block;
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    .confidence-ring span {
+      display: block;
+      color: var(--ink-3);
+      font-size: 11px;
+    }
+
+    .chart-card {
+      min-height: 216px;
+      padding: 16px;
+    }
+
+    .bar-chart {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      align-items: end;
+      gap: 9px;
+      height: 132px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .bar {
+      position: relative;
+      min-height: 18px;
+      border-radius: 6px 6px 0 0;
+      background: linear-gradient(180deg, var(--primary-2), var(--primary));
+      transform-origin: bottom;
+      animation: grow .95s ease both;
+    }
+
+    .bar:nth-child(2n) { background: linear-gradient(180deg, var(--data), #0f7683); }
+    .bar:nth-child(5) { background: linear-gradient(180deg, var(--lime), #4f8f2f); }
+
+    .bar::after {
+      content: attr(data-label);
+      position: absolute;
+      right: 50%;
+      bottom: -23px;
+      transform: translateX(50%);
+      color: var(--ink-4);
+      font-size: 10px;
+    }
+
+    .insight-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .insight {
+      display: grid;
+      grid-template-columns: 10px 1fr auto;
+      gap: 11px;
+      min-height: 74px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.035);
+      transition: background .16s ease, border-color .16s ease;
+    }
+
+    .insight:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(19, 201, 220, 0.28);
+    }
+
+    .tone {
+      width: 10px;
+      min-height: 100%;
+      border-radius: 99px;
+      background: var(--warning);
+    }
+
+    .tone.high { background: var(--danger); }
+    .tone.good { background: var(--success); }
+    .insight strong { display: block; font-size: 13px; line-height: 1.35; }
+    .insight span { display: block; margin-top: 5px; color: var(--ink-3); font-size: 11px; line-height: 1.45; }
+    .insight b {
+      align-self: start;
+      min-width: 44px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      color: var(--data);
+      background: rgba(19, 201, 220, 0.1);
+      font-size: 10px;
+      text-align: center;
+    }
+
+    .phone-wrap {
+      display: grid;
+      justify-items: center;
+      padding: 16px;
+    }
+
+    .phone {
+      width: min(260px, 100%);
+      min-height: 476px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 28px;
+      background: #05060a;
+    }
+
+    .phone-screen {
+      overflow: hidden;
+      min-height: 452px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      background: var(--surface-1);
+    }
+
+    .phone-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 48px;
+      padding: 0 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px;
+      color: var(--ink-2);
+    }
+
+    .progress {
+      height: 5px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .progress i {
+      display: block;
+      width: 57%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--data));
+      animation: progress-pulse 2.2s ease-in-out infinite;
+    }
+
+    .phone-body {
+      padding: 18px 14px;
+    }
+
+    .question-code {
+      color: var(--data);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .question-title {
+      margin-top: 8px;
+      color: var(--ink);
+      font-size: 17px;
+      line-height: 1.45;
+      font-weight: 750;
+    }
+
+    .option-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      min-height: 46px;
+      padding: 0 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      color: var(--ink-2);
+      background: rgba(255,255,255,0.04);
+      font-size: 13px;
+    }
+
+    .option.active {
+      color: white;
+      border-color: rgba(124, 92, 255, 0.7);
+      background: rgba(124, 92, 255, 0.28);
+    }
+
+    .phone-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .phone-actions button {
+      min-height: 44px;
+      border-radius: var(--radius);
+      color: var(--ink-2);
+      background: rgba(255,255,255,0.05);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .phone-actions .next {
+      color: white;
+      background: var(--primary);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 28px;
+      margin-bottom: 22px;
+    }
+
+    .section-head h2 {
+      margin-top: 14px;
+      max-width: 720px;
+      font-size: clamp(26px, 2.3vw, 36px);
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      max-width: 520px;
+      color: var(--ink-2);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .flow-card {
+      position: relative;
+      min-height: 188px;
+      padding: 15px;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--radius);
+      background: rgba(17, 19, 27, 0.78);
+      overflow: hidden;
+    }
+
+    .flow-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--data));
+      opacity: .82;
+    }
+
+    .flow-card b {
+      display: block;
+      color: var(--ink);
+      font-size: 15px;
+    }
+
+    .flow-card p {
+      margin-top: 10px;
+      color: var(--ink-3);
+      font-size: 12px;
+      line-height: 1.52;
+    }
+
+    .flow-io {
+      display: grid;
+      gap: 7px;
+      margin-top: 18px;
+    }
+
+    .io-line {
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 6px;
+      color: var(--ink-2);
+      background: rgba(255,255,255,0.035);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: 1.55fr .9fr;
+      gap: 14px;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .module-card {
+      min-height: 104px;
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--radius);
+      background: rgba(17, 19, 27, 0.78);
+      transition: transform .16s ease, border-color .16s ease;
+    }
+
+    .module-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(19, 201, 220, 0.32);
+    }
+
+    .module-card .module-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .module-card strong {
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .badge {
+      min-width: 32px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      color: white;
+      background: var(--primary);
+      font-size: 10px;
+      font-weight: 850;
+      text-align: center;
+    }
+
+    .badge.p1 {
+      color: #061015;
+      background: var(--lime);
+    }
+
+    .module-card p {
+      margin-top: 12px;
+      color: var(--ink-3);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .h5-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .h5-card {
+      min-height: 88px;
+      padding: 13px;
+      border: 1px solid rgba(34,197,94,0.26);
+      border-radius: var(--radius);
+      background: rgba(34,197,94,0.055);
+    }
+
+    .h5-card strong {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .h5-card p {
+      margin-top: 9px;
+      color: var(--ink-3);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.56fr);
+      gap: 14px;
+    }
+
+    .report-main {
+      display: grid;
+      gap: 12px;
+    }
+
+    .report-row {
+      display: grid;
+      grid-template-columns: 150px 1fr 96px;
+      gap: 10px;
+      align-items: center;
+      min-height: 76px;
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .report-row b {
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .report-row p {
+      color: var(--ink-2);
+      font-size: 12px;
+      line-height: 1.48;
+    }
+
+    .meter {
+      display: grid;
+      gap: 6px;
+      color: var(--ink-3);
+      font-size: 10px;
+    }
+
+    .meter i {
+      display: block;
+      height: 6px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+
+    .meter i::before {
+      content: "";
+      display: block;
+      width: var(--w);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--data), var(--primary));
+    }
+
+    .action-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .action-card {
+      min-height: 86px;
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .action-card strong {
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .action-card p {
+      margin-top: 8px;
+      color: var(--ink-3);
+      font-size: 12px;
+      line-height: 1.48;
+    }
+
+    .final-band {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 18px;
+      min-height: 210px;
+      padding: 28px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(124, 92, 255, 0.22), rgba(19, 201, 220, 0.08)),
+        rgba(17, 19, 27, 0.86);
+    }
+
+    .final-band h2 {
+      max-width: 13em;
+      font-size: clamp(28px, 3vw, 40px);
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    .final-band p {
+      margin-top: 15px;
+      max-width: 640px;
+      color: var(--ink-2);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .delivery-list {
+      display: grid;
+      gap: 9px;
+      min-width: 280px;
+    }
+
+    .delivery-list div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 42px;
+      padding: 11px 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.04);
+      color: var(--ink-2);
+      font-size: 12px;
+    }
+
+    .delivery-list b { color: var(--ink); }
+
+    .asset-guide {
+      padding-top: 18px;
+    }
+
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .asset-card {
+      min-height: 186px;
+      padding: 15px;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--radius);
+      background: rgba(17, 19, 27, 0.78);
+    }
+
+    .asset-card b {
+      display: block;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .asset-card p {
+      margin-top: 10px;
+      color: var(--ink-3);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .asset-card code {
+      display: block;
+      margin-top: 14px;
+      padding: 9px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      color: var(--data);
+      background: rgba(0,0,0,0.24);
+      font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+      font-size: 10px;
+      line-height: 1.45;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    footer {
+      width: min(1440px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 44px;
+      color: var(--ink-4);
+      font-size: 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    @keyframes page-scan {
+      0% { transform: translateX(-120%); }
+      45%, 100% { transform: translateX(120%); }
+    }
+
+    @keyframes rail {
+      0% { transform: translateX(-55%); }
+      50% { transform: translateX(55%); }
+      100% { transform: translateX(145%); }
+    }
+
+    @keyframes grow {
+      from { transform: scaleY(.15); opacity: .45; }
+      to { transform: scaleY(1); opacity: 1; }
+    }
+
+    @keyframes progress-pulse {
+      0%, 100% { width: 57%; }
+      50% { width: 63%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media (max-width: 1180px) {
+      .launch-inner,
+      .hero-grid,
+      .matrix,
+      .report-grid,
+      .final-band {
+        grid-template-columns: 1fr;
+      }
+
+      .launch-inner {
+        align-items: start;
+      }
+
+      .launch-stack {
+        max-width: 680px;
+      }
+
+      .intro-panel {
+        min-height: auto;
+      }
+
+      .intro-meta {
+        position: static;
+        margin-top: 26px;
+      }
+
+      .flow-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .asset-grid,
+      .module-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 820px) {
+      body {
+        background-size: 36px 36px, 36px 36px, auto, auto;
+      }
+
+      .global-bar {
+        grid-template-columns: 1fr auto;
+        width: min(100% - 24px, 720px);
+        padding: 8px 10px;
+      }
+
+      .site-nav {
+        display: none;
+      }
+
+      .bar-actions .ghost-btn {
+        display: none;
+      }
+
+      .section {
+        width: min(100% - 24px, 720px);
+        padding: 44px 0;
+      }
+
+      .launch-section {
+        min-height: auto;
+        margin-top: -62px;
+        padding: 110px 0 42px;
+      }
+
+      .launch-inner {
+        width: min(100% - 24px, 720px);
+        gap: 20px;
+      }
+
+      .launch-title {
+        max-width: 7em;
+        font-size: 44px;
+        line-height: 1.1;
+      }
+
+      .launch-stack {
+        padding: 12px;
+        border-radius: 18px;
+      }
+
+      .launch-stack .micro-card {
+        min-height: 96px;
+        grid-template-columns: 54px 1fr;
+        gap: 14px;
+        padding: 14px;
+        border-radius: 14px;
+      }
+
+      .launch-stack .micro-index {
+        width: 54px;
+        height: 54px;
+        font-size: 16px;
+      }
+
+      .launch-stack .micro-card strong {
+        font-size: 15px;
+      }
+
+      .launch-stack .micro-card span {
+        font-size: 13px;
+      }
+
+      .launch-section .intro-meta {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .workspace-heading {
+        display: grid;
+      }
+
+      .hero-section {
+        min-height: auto;
+        padding-top: 16px;
+      }
+
+      .hero-grid,
+      .console-grid,
+      .campaign-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .intro-panel,
+      .app-shell {
+        min-height: auto;
+      }
+
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .app-sidebar {
+        display: none;
+      }
+
+      .app-main {
+        padding: 12px;
+      }
+
+      .app-top {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .top-search {
+        width: 100%;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .flow-grid,
+      .asset-grid,
+      .module-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        display: grid;
+      }
+
+      .report-row {
+        grid-template-columns: 1fr;
+      }
+
+      .final-band {
+        padding: 20px;
+      }
+
+      .delivery-list {
+        min-width: 0;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .brand-text span {
+        display: none;
+      }
+
+      .lang-switch button {
+        min-width: 38px;
+        min-height: 32px;
+      }
+
+      .primary-btn {
+        min-height: 40px;
+        padding: 0 12px;
+      }
+
+      h1 {
+        font-size: 42px;
+      }
+
+      .launch-title {
+        font-size: 38px;
+        line-height: 1.12;
+      }
+
+      .launch-ctas .primary-btn,
+      .launch-ctas .ghost-btn {
+        width: 100%;
+      }
+
+      .intro-panel {
+        padding: 20px;
+      }
+
+      .intro-meta,
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .campaign-title {
+        font-size: 23px;
+      }
+
+      .phone {
+        width: min(100%, 306px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="global-bar liquid-glass">
+      <a class="brand" href="#launch" aria-label="Perxio">
+        <span class="brand-mark">P</span>
+        <span class="brand-text">
+          <strong>Perxio 派研</strong>
+          <span>Experience Intelligence</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="#launch"><span class="zh">启动页</span><span class="en">Home</span></a>
+        <a href="#workspace"><span class="zh">工作台</span><span class="en">Workspace</span></a>
+        <a href="#loop"><span class="zh">闭环流程</span><span class="en">Loop</span></a>
+        <a href="#scope"><span class="zh">模块范围</span><span class="en">Scope</span></a>
+        <a href="#diagnosis"><span class="zh">AI 诊断</span><span class="en">AI Diagnosis</span></a>
+      </nav>
+      <div class="bar-actions">
+        <div class="lang-switch" aria-label="Language switch">
+          <button type="button" data-lang-choice="zh">中</button>
+          <button type="button" data-lang-choice="en">EN</button>
+        </div>
+        <a class="ghost-btn" href="#asset-guide"><span class="zh">素材说明</span><span class="en">Asset Notes</span></a>
+        <a class="primary-btn" href="#workspace"><span class="zh">进入产品</span><span class="en">Open Product</span></a>
+      </div>
+    </header>
+
+    <main>
+      <section class="launch-section" id="launch" data-asset-slot="ASSET-01_STARTUP_HERO">
+        <!-- ASSET-01_STARTUP_BACKGROUND_VIDEO: replace src with final brand motion video. Suggested ratio: 16:9 or wider, dark-safe, 8-14s loop, no embedded text. -->
+        <video
+          class="launch-video"
+          data-fade-loop-video
+          data-asset-slot="ASSET-01_STARTUP_BACKGROUND_VIDEO"
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_074625_a81f018a-956b-43fb-9aee-4d1508e30e6a.mp4"
+          muted
+          autoplay
+          playsinline
+          preload="auto"
+        ></video>
+        <div class="launch-fallback" data-asset-slot="ASSET-01_FALLBACK_BACKGROUND"></div>
+        <div class="launch-overlay"></div>
+        <div class="launch-inner">
+          <div class="launch-copy" data-reveal>
+            <div class="eyebrow">Perxio Experience Intelligence</div>
+            <h1 class="launch-title"><span class="zh">增长活动调研助手</span><span class="en">Growth Research Assistant</span></h1>
+            <p class="intro-copy">
+              <span class="zh">把活动验收、问卷投放、样本清洗、AI 诊断和复盘回流合并为一条工作流。</span>
+              <span class="en">Combine campaign checks, survey launch, sample cleaning, AI diagnosis and review feedback into one workflow.</span>
+            </p>
+            <div class="launch-ctas">
+              <a class="primary-btn liquid-glass" href="#workspace"><span class="zh">进入产品工作台</span><span class="en">Open Workspace</span></a>
+              <a class="ghost-btn liquid-glass" href="#asset-guide"><span class="zh">查看素材替换位</span><span class="en">View Asset Slots</span></a>
+            </div>
+          </div>
+
+          <div class="launch-stack liquid-glass" data-reveal data-asset-slot="ASSET-02_STARTUP_CONTENT_CARDS">
+            <!-- ASSET-02_STARTUP_CONTENT_CARDS: replace copy or card media after final campaign material is confirmed. Keep three cards to preserve rhythm. -->
+            <div class="micro-card">
+              <span class="micro-index">01</span>
+              <div>
+                <strong><span class="zh">主入口：Web 管理端</span><span class="en">Primary Entry: Web Console</span></strong>
+                <span><span class="zh">项目、问卷、投放、回收、诊断和报告集中处理。</span><span class="en">Projects, surveys, launch, collection, diagnosis and reports stay in one console.</span></span>
+              </div>
+            </div>
+            <div class="micro-card">
+              <span class="micro-index">02</span>
+              <div>
+                <strong><span class="zh">触达端：H5 问卷</span><span class="en">Participant Entry: H5 Survey</span></strong>
+                <span><span class="zh">链接投放到活动页、社群、短信和业务方 APP，提交后记录奖励资格。</span><span class="en">Links go to campaign pages, groups, SMS and partner apps; submissions record reward eligibility.</span></span>
+              </div>
+            </div>
+            <div class="micro-card">
+              <span class="micro-index">03</span>
+              <div>
+                <strong><span class="zh">样例数据：DailyLazCash</span><span class="en">Sample Data: DailyLazCash</span></strong>
+                <span><span class="zh">用积分活动样例展示采集、清洗、诊断和回流。</span><span class="en">A points campaign sample shows collection, cleaning, diagnosis and feedback.</span></span>
+              </div>
+            </div>
+            <div class="intro-meta">
+              <div><b>11</b><span><span class="zh">Web 模块</span><span class="en">Web modules</span></span></div>
+              <div><b>4</b><span><span class="zh">H5 页面</span><span class="en">H5 pages</span></span></div>
+              <div><b>6</b><span><span class="zh">闭环阶段</span><span class="en">Loop stages</span></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section hero-section workspace-section" id="workspace">
+        <div class="workspace-heading" data-reveal>
+          <div>
+            <div class="eyebrow">Product Console</div>
+            <h2><span class="zh">增长活动工作台</span><span class="en">Growth Campaign Workspace</span></h2>
+          </div>
+          <p>
+            <span class="zh">管理端跟踪项目、问卷、投放、回收、诊断和报告；H5 端负责参与者答题。</span>
+            <span class="en">The console tracks projects, surveys, launch, collection, diagnosis and reports; H5 handles participant answers.</span>
+          </p>
+        </div>
+
+          <section class="app-shell" aria-label="Perxio app preview" data-reveal data-asset-slot="ASSET-03_PRODUCT_INTERFACE_PREVIEW">
+            <aside class="app-sidebar">
+              <div class="workspace-label">
+                <span><span class="zh">增长活动空间</span><span class="en">Growth Space</span></span>
+                <span>P0</span>
+              </div>
+              <nav class="module-nav" id="moduleNav"></nav>
+              <div class="sidebar-foot">
+                <strong><span class="zh">本周诊断队列</span><span class="en">Weekly Queue</span></strong>
+                <span><span class="zh">3 个报告待确认，1 个风险预警需要业务负责人决策。</span><span class="en">3 reports need review; 1 risk alert needs owner decision.</span></span>
+              </div>
+            </aside>
+
+            <div class="app-main">
+              <div class="app-top">
+                <div class="breadcrumb">
+                  <span>Perxio</span>
+                  <span>/</span>
+                  <span id="activeCrumb">工作台</span>
+                </div>
+                <div class="top-search">
+                  <span>⌕</span>
+                  <span><span class="zh">搜索项目、报告、竞品基准</span><span class="en">Search projects, reports, benchmarks</span></span>
+                </div>
+              </div>
+
+              <div class="kpi-grid" id="kpiGrid"></div>
+
+              <div class="console-grid">
+                <section class="panel panel-pad campaign-panel">
+                  <div>
+                    <div class="panel-head">
+                      <div class="panel-title"><span class="zh">当前活动</span><span class="en">Active Campaign</span></div>
+                      <a class="panel-link" href="#diagnosis"><span class="zh">进入诊断</span><span class="en">Open diagnosis</span></a>
+                    </div>
+                    <h2 class="campaign-title" id="campaignTitle">DailyLazCash 积分增长活动</h2>
+                    <p class="campaign-desc" id="campaignDesc"></p>
+                    <div class="stage-row" id="stageRow"></div>
+                  </div>
+                  <div class="confidence-ring">
+                    <div>
+                      <strong>82%</strong>
+                      <span><span class="zh">诊断置信度</span><span class="en">Confidence</span></span>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="panel panel-pad phone-wrap">
+                  <div class="panel-head" style="width:100%;">
+                    <div class="panel-title"><span class="zh">H5 问卷端</span><span class="en">H5 Survey</span></div>
+                    <span class="panel-link">390px</span>
+                  </div>
+                  <div class="phone" aria-label="H5 survey preview">
+                    <div class="phone-screen">
+                      <div class="phone-top">
+                        <span><span class="zh">活动体验问卷</span><span class="en">Campaign Survey</span></span>
+                        <span>03/07</span>
+                      </div>
+                      <div class="progress"><i></i></div>
+                      <div class="phone-body">
+                        <div class="question-code">Q03 · A/B</div>
+                        <div class="question-title">
+                          <span class="zh">本次任务说明是否让你清楚知道奖励到账条件？</span>
+                          <span class="en">Did the task copy make the reward conditions clear?</span>
+                        </div>
+                        <div class="option-list">
+                          <div class="option"><span class="zh">完全清楚</span><span class="en">Very clear</span></div>
+                          <div class="option active"><span class="zh">基本清楚，但需要返回查看</span><span class="en">Mostly clear, but I checked again</span></div>
+                          <div class="option"><span class="zh">不清楚，担心无法获得奖励</span><span class="en">Unclear, reward eligibility is uncertain</span></div>
+                          <div class="option"><span class="zh">没有看到说明</span><span class="en">I did not see the instructions</span></div>
+                        </div>
+                        <div class="phone-actions">
+                          <button type="button"><span class="zh">上一步</span><span class="en">Back</span></button>
+                          <button type="button" class="next"><span class="zh">下一题</span><span class="en">Next</span></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="panel chart-card">
+                  <div class="panel-head">
+                    <div class="panel-title"><span class="zh">实时回收趋势</span><span class="en">Live Collection Trend</span></div>
+                    <span class="panel-link"><span class="zh">每 5 分钟刷新</span><span class="en">Refresh 5 min</span></span>
+                  </div>
+                  <div class="bar-chart" id="barChart"></div>
+                </section>
+
+                <section class="panel panel-pad">
+                  <div class="panel-head">
+                    <div class="panel-title"><span class="zh">AI 诊断摘要</span><span class="en">AI Diagnosis Summary</span></div>
+                    <span class="panel-link">P0</span>
+                  </div>
+                  <div class="insight-list" id="insightList"></div>
+                </section>
+              </div>
+            </div>
+          </section>
+      </section>
+
+      <section class="section" id="loop">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Closed Loop</div>
+            <h2><span class="zh">采集、清洗、诊断、回流</span><span class="en">Collect, clean, diagnose, feed back</span></h2>
+          </div>
+          <p>
+            <span class="zh">每一层明确输入、处理和输出；报告必须返回活动迭代优先级。</span>
+            <span class="en">Each layer defines input, processing and output; reports must return iteration priorities.</span>
+          </p>
+        </div>
+        <div class="flow-grid" id="flowGrid"></div>
+      </section>
+
+      <section class="section" id="scope">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">MVP Scope</div>
+            <h2><span class="zh">MVP 页面与模块范围</span><span class="en">MVP pages and modules</span></h2>
+          </div>
+          <p>
+            <span class="zh">Web 管理端 11 个模块，H5 问卷端 4 个页面。P1 不进入首版主流程。</span>
+            <span class="en">11 web modules and 4 H5 pages. P1 does not enter the first-release main flow.</span>
+          </p>
+        </div>
+        <div class="matrix">
+          <div class="module-grid" id="webModules"></div>
+          <div class="h5-grid" id="h5Modules"></div>
+        </div>
+      </section>
+
+      <section class="section" id="diagnosis">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">AI Diagnosis Report</div>
+            <h2><span class="zh">诊断报告与行动项</span><span class="en">Diagnosis report and actions</span></h2>
+          </div>
+          <p>
+            <span class="zh">样本量、清洗质量、A/B 差异和基准对比达到阈值时，结论才标记为可采纳。</span>
+            <span class="en">A finding is actionable only when sample size, cleaning quality, A/B difference and benchmark checks meet thresholds.</span>
+          </p>
+        </div>
+        <div class="report-grid">
+          <section class="panel panel-pad">
+            <div class="panel-head">
+              <div class="panel-title"><span class="zh">DailyLazCash 诊断报告</span><span class="en">DailyLazCash Diagnosis Report</span></div>
+              <span class="panel-link">V01</span>
+            </div>
+            <div class="report-main" id="reportRows"></div>
+          </section>
+          <aside class="panel panel-pad">
+            <div class="panel-head">
+              <div class="panel-title"><span class="zh">行动优先级</span><span class="en">Action Priority</span></div>
+              <span class="panel-link"><span class="zh">按影响排序</span><span class="en">Impact sorted</span></span>
+            </div>
+            <div class="action-stack" id="actionStack"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="final-band">
+          <div>
+            <div class="eyebrow">Product Direction</div>
+            <h2><span class="zh">首版只解决一件事：把反馈变成调整依据</span><span class="en">MVP focus: turn feedback into adjustment evidence</span></h2>
+            <p>
+              <span class="zh">不自动改活动配置，不自动发奖励；只输出证据、归因、优先级和回流记录。</span>
+              <span class="en">No automatic campaign changes or reward issuing; output evidence, attribution, priority and feedback records.</span>
+            </p>
+          </div>
+          <div class="delivery-list">
+            <div><span><span class="zh">核心闭环</span><span class="en">Core loop</span></span><b><span class="zh">已覆盖</span><span class="en">Covered</span></b></div>
+            <div><span><span class="zh">语言切换</span><span class="en">Language switch</span></span><b>ZH / EN</b></div>
+            <div><span><span class="zh">首版形态</span><span class="en">MVP form</span></span><b>Web + H5</b></div>
+            <div><span><span class="zh">样例数据</span><span class="en">Sample data</span></span><b>DailyLazCash</b></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section asset-guide" id="asset-guide">
+        <div class="section-head" data-reveal>
+          <div>
+            <div class="eyebrow">Asset Handoff</div>
+            <h2><span class="zh">后续素材替换位</span><span class="en">Replaceable asset slots</span></h2>
+          </div>
+          <p>
+            <span class="zh">代码中已用 `data-asset-slot` 标注。替换时保留尺寸比例和暗色安全区。</span>
+            <span class="en">The code uses `data-asset-slot` markers. Keep aspect ratio and dark-safe space when replacing assets.</span>
+          </p>
+        </div>
+        <div class="asset-grid">
+          <article class="asset-card liquid-glass" data-reveal>
+            <b>ASSET-01_STARTUP_BACKGROUND_VIDEO</b>
+            <p><span class="zh">启动页背景视频。建议 8-14 秒循环、黑底或低亮度、无内嵌文字；视频会自动淡入淡出循环。</span><span class="en">Startup background video. Use an 8-14s dark loop with no baked-in text; it fades in and out automatically.</span></p>
+            <code>video.launch-video[data-asset-slot]</code>
+          </article>
+          <article class="asset-card liquid-glass" data-reveal>
+            <b>ASSET-02_STARTUP_CONTENT_CARDS</b>
+            <p><span class="zh">启动页右侧三张说明卡。可替换为品牌卖点、项目阶段或真实案例摘要；建议保持三项节奏。</span><span class="en">Three startup cards. Replace with brand points, project stages or case summaries; keep three items for rhythm.</span></p>
+            <code>.launch-stack[data-asset-slot]</code>
+          </article>
+          <article class="asset-card liquid-glass" data-reveal>
+            <b>ASSET-03_PRODUCT_INTERFACE_PREVIEW</b>
+            <p><span class="zh">产品工作台区域。后续可替换为真实管理端截图、录屏或高保真嵌入原型。</span><span class="en">Product console preview. Replace with a real screenshot, screen recording or embedded high-fidelity prototype.</span></p>
+            <code>.app-shell[data-asset-slot]</code>
+          </article>
+          <article class="asset-card liquid-glass" data-reveal>
+            <b>ASSET-04_SAMPLE_DATA</b>
+            <p><span class="zh">当前 DailyLazCash 为样例数据。真实数据接入后替换 JS 中的 KPI、诊断摘要、报告与行动项。</span><span class="en">DailyLazCash is sample data. Replace KPI, insights, report rows and actions in the JS data object.</span></p>
+            <code>const data = { zh, en }</code>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span class="zh">Perxio 派研 - 增长活动调研助手平台 V03。结构、字号和文案已按阅读性优化。</span>
+      <span class="en">Perxio Growth Research Assistant V03. Structure, type scale and copy are optimized for readability.</span>
+    </footer>
+  </div>
+
+  <script>
+    // ASSET-04_SAMPLE_DATA: replace this object when real campaign metrics, report findings, and action items are ready.
+    const data = {
+      zh: {
+        campaignDesc: "活动目标：验证积分任务规则是否被理解，定位奖励到账疑虑、任务说明重复查看和 H5 填写中断。",
+        stages: ["活动定义", "体验设计", "数据采集", "数据验证", "诊断归因", "迭代分发"],
+        kpis: [
+          ["有效样本", "5,816", "+18.4%"],
+          ["完成率", "28.1%", "+3.2pp"],
+          ["清洗通过", "83%", "+7.6pp"],
+          ["高风险问题", "3", "需确认"]
+        ],
+        modules: [
+          ["工作台", "概览面板 · 待办事项", "P0"],
+          ["项目空间", "列表 · 详情 · 创建", "P0"],
+          ["竞品库", "档案 · 对比 · 动态", "P0"],
+          ["体验问题", "看板 · 排期 · 指标", "P1"],
+          ["数据回收", "概览 · 记录 · 监控 · 清洗", "P0"],
+          ["知识库", "条目 · 归档 · 标签 · 搜索", "P1"],
+          ["问卷工坊", "列表 · 编辑 · 模板 · 预览", "P0"],
+          ["AI 诊断", "报告 · 置信度 · 预警 · 对比", "P0"],
+          ["组织设置", "成员 · 权限 · 组织 · 通知", "P0"],
+          ["审核投放", "审核 · 渠道 · 配额 · 投放", "P0"],
+          ["报告导出", "导出 · 报告 · 奖励清单", "P0"]
+        ],
+        h5: [
+          ["问卷入口", "说明 · 预计时长 · 隐私", "P0"],
+          ["答题流程", "逐题渲染 · 校验 · 进度保存", "P0"],
+          ["提交成功", "确认反馈 · 奖励提示 · 分享", "P0"],
+          ["草稿恢复", "断点续答 · 上次位置恢复", "P1"]
+        ],
+        insights: [
+          ["奖励到账条件不清", "38% 的低分反馈集中在“完成后是否一定到账”。", "高", "high"],
+          ["B 版说明负反馈下降", "B 版把门槛拆为 3 行后，规则理解负反馈下降 11.8pp。", "82%", "good"],
+          ["清洗后样本可诊断", "异常答题、重复提交和极短时长样本已剔除。", "83%", ""]
+        ],
+        flow: [
+          ["采集", "收集问卷、行为埋点、A/B 版本和竞品基准。", "输入：问卷答案 / 行为事件", "输出：原始样本集"],
+          ["清洗", "剔除重复、异常时长、矛盾答案和无效标识。", "输入：原始样本集", "输出：可诊断样本集"],
+          ["AI 诊断", "按理解、信任、转化、对比、风险 5 个维度归因。", "输入：清洗样本 + 基准", "输出：结论与置信度"],
+          ["输出", "生成固定模板报告、风险预警和行动建议。", "输入：诊断结论", "输出：报告 V01"],
+          ["分发", "导出报告和奖励资格清单，给业务负责人确认。", "输入：报告 + 清单", "输出：决策记录"],
+          ["回流", "记录采纳项、复测指标和下一轮活动问题。", "输入：决策记录", "输出：迭代优先级"]
+        ],
+        report: [
+          ["体验理解", "任务说明需要二次查看的用户完成率低 9.4pp，问题集中在奖励门槛和到账时间。", "86%"],
+          ["激励信任", "留下用户标识后仍担心无法到账的占比为 21%，高于竞品基准 8pp。", "78%"],
+          ["转化阻塞", "H5 第 3 题后退出率上升，退出用户中 44% 来自短信渠道。", "74%"],
+          ["A/B 对比", "B 版说明降低负反馈，但对完成率提升未达到显著阈值。", "82%"],
+          ["风险预警", "若投放继续扩大，奖励核对客服咨询量预计增加 12%-18%。", "69%"]
+        ],
+        actions: [
+          ["P0", "把奖励到账条件拆成“完成标准 / 到账时间 / 异常申诉”三段，并在 H5 入口页露出。"],
+          ["P0", "短信渠道增加活动说明落地页，不直接跳到第 1 题。"],
+          ["P1", "下一轮投放保留 B 版说明，样本达到 8,000 后再判断完成率差异。"]
+        ]
+      },
+      en: {
+        campaignDesc: "Campaign target: validate whether points-task rules are understood, then locate reward concerns, repeated rule checks and H5 interruptions.",
+        stages: ["Define", "Design", "Collect", "Validate", "Diagnose", "Distribute"],
+        kpis: [
+          ["Valid samples", "5,816", "+18.4%"],
+          ["Completion", "28.1%", "+3.2pp"],
+          ["Clean pass", "83%", "+7.6pp"],
+          ["High risks", "3", "Review"]
+        ],
+        modules: [
+          ["Workspace", "Overview · Tasks", "P0"],
+          ["Project Space", "List · Detail · Create", "P0"],
+          ["Competitor Library", "Profiles · Compare · Updates", "P0"],
+          ["Experience Issues", "Board · Schedule · Metrics", "P1"],
+          ["Data Collection", "Overview · Records · Monitor · Clean", "P0"],
+          ["Knowledge Base", "Entries · Archive · Tags · Search", "P1"],
+          ["Survey Studio", "List · Edit · Template · Preview", "P0"],
+          ["AI Diagnosis", "Report · Confidence · Alert · Compare", "P0"],
+          ["Org Settings", "Members · Roles · Org · Notices", "P0"],
+          ["Review & Launch", "Review · Channel · Quota · Launch", "P0"],
+          ["Report Export", "Export · Report · Reward List", "P0"]
+        ],
+        h5: [
+          ["Survey Entry", "Intro · Time · Privacy", "P0"],
+          ["Answer Flow", "Step render · Validation · Save", "P0"],
+          ["Submit Success", "Confirm · Reward · Share", "P0"],
+          ["Draft Recovery", "Resume · Last position", "P1"]
+        ],
+        insights: [
+          ["Reward conditions unclear", "38% of low-score feedback is about reward certainty.", "High", "high"],
+          ["Version B reduces complaints", "Splitting rules into 3 lines reduced comprehension complaints by 11.8pp.", "82%", "good"],
+          ["Clean sample is diagnosable", "Duplicate, too-fast and conflicting samples were removed.", "83%", ""]
+        ],
+        flow: [
+          ["Collect", "Capture survey answers, behavior events, A/B versions and competitor benchmarks.", "Input: answers / events", "Output: raw sample set"],
+          ["Clean", "Remove duplicates, abnormal duration, conflicting answers and invalid identifiers.", "Input: raw sample set", "Output: diagnosable samples"],
+          ["AI Diagnose", "Attribute by comprehension, trust, conversion, benchmark and risk.", "Input: clean sample + benchmark", "Output: finding + confidence"],
+          ["Output", "Generate fixed report template, risk alerts and action suggestions.", "Input: diagnosis results", "Output: report V01"],
+          ["Distribute", "Export report and reward list for business owner review.", "Input: report + list", "Output: decision record"],
+          ["Feedback", "Record accepted actions, retest metrics and next-round issues.", "Input: decision record", "Output: iteration priority"]
+        ],
+        report: [
+          ["Comprehension", "Users who checked task copy twice completed 9.4pp less often; issues center on reward threshold and arrival time.", "86%"],
+          ["Incentive Trust", "21% still worry about reward arrival after leaving identifiers, 8pp above benchmark.", "78%"],
+          ["Conversion Block", "Exit rate rises after H5 Q3; 44% of exits come from SMS traffic.", "74%"],
+          ["A/B Compare", "Version B reduces negative feedback, but completion uplift is not statistically strong yet.", "82%"],
+          ["Risk Alert", "If launch expands, reward-check service tickets may rise 12%-18%.", "69%"]
+        ],
+        actions: [
+          ["P0", "Split reward copy into completion standard, arrival time and exception appeal on the H5 entry page."],
+          ["P0", "Add an explanation landing page for SMS traffic before the first question."],
+          ["P1", "Keep version B in the next launch and re-test completion difference after 8,000 samples."]
+        ]
+      }
+    };
+
+    const charts = [46, 58, 52, 70, 92, 76, 84];
+    const chartLabels = { zh: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"], en: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] };
+    const moduleCodes = ["W", "P", "C", "I", "D", "K", "Q", "AI", "O", "L", "R"];
+
+    function lang() {
+      return document.documentElement.dataset.lang === "en" ? "en" : "zh";
+    }
+
+    function render() {
+      const l = lang();
+      const t = data[l];
+      document.documentElement.lang = l === "en" ? "en" : "zh-CN";
+      document.getElementById("campaignDesc").textContent = t.campaignDesc;
+      document.getElementById("campaignTitle").textContent = l === "en" ? "DailyLazCash Points Campaign" : "DailyLazCash 积分增长活动";
+      document.getElementById("activeCrumb").textContent = t.modules[0][0];
+
+      document.getElementById("moduleNav").innerHTML = t.modules.map((item, index) => `
+        <button type="button" class="${index === 0 ? "active" : ""}" data-module-index="${index}">
+          <i>${moduleCodes[index]}</i>
+          <b>${item[0]}</b>
+          <span>${item[2]}</span>
+        </button>
+      `).join("");
+
+      document.getElementById("kpiGrid").innerHTML = t.kpis.map(item => `
+        <div class="kpi">
+          <span>${item[0]}</span>
+          <strong>${item[1]}</strong>
+          <em>${item[2]}</em>
+        </div>
+      `).join("");
+
+      document.getElementById("stageRow").innerHTML = t.stages.map((item, index) => `
+        <span class="stage-chip ${index === 4 ? "active" : ""}">${item}</span>
+      `).join("");
+
+      document.getElementById("barChart").innerHTML = charts.map((h, index) => `
+        <div class="bar" style="height:${h}%" data-label="${chartLabels[l][index]}"></div>
+      `).join("");
+
+      document.getElementById("insightList").innerHTML = t.insights.map(item => `
+        <article class="insight">
+          <span class="tone ${item[3]}"></span>
+          <div>
+            <strong>${item[0]}</strong>
+            <span>${item[1]}</span>
+          </div>
+          <b>${item[2]}</b>
+        </article>
+      `).join("");
+
+      document.getElementById("flowGrid").innerHTML = t.flow.map(item => `
+        <article class="flow-card">
+          <b>${item[0]}</b>
+          <p>${item[1]}</p>
+          <div class="flow-io">
+            <div class="io-line">${item[2]}</div>
+            <div class="io-line">${item[3]}</div>
+          </div>
+        </article>
+      `).join("");
+
+      document.getElementById("webModules").innerHTML = t.modules.map(item => `
+        <article class="module-card">
+          <div class="module-top">
+            <strong>${item[0]}</strong>
+            <span class="badge ${item[2] === "P1" ? "p1" : ""}">${item[2]}</span>
+          </div>
+          <p>${item[1]}</p>
+        </article>
+      `).join("");
+
+      document.getElementById("h5Modules").innerHTML = t.h5.map(item => `
+        <article class="h5-card">
+          <strong>${item[0]} <span class="badge ${item[2] === "P1" ? "p1" : ""}">${item[2]}</span></strong>
+          <p>${item[1]}</p>
+        </article>
+      `).join("");
+
+      document.getElementById("reportRows").innerHTML = t.report.map(item => `
+        <article class="report-row">
+          <b>${item[0]}</b>
+          <p>${item[1]}</p>
+          <span class="meter">
+            <i style="--w:${item[2]}"></i>
+            ${item[2]}
+          </span>
+        </article>
+      `).join("");
+
+      document.getElementById("actionStack").innerHTML = t.actions.map(item => `
+        <article class="action-card">
+          <strong>${item[0]}</strong>
+          <p>${item[1]}</p>
+        </article>
+      `).join("");
+
+      bindModuleNav();
+    }
+
+    function bindModuleNav() {
+      document.querySelectorAll("[data-module-index]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const l = lang();
+          const item = data[l].modules[Number(btn.dataset.moduleIndex)];
+          document.querySelectorAll("[data-module-index]").forEach(other => other.classList.remove("active"));
+          btn.classList.add("active");
+          document.getElementById("activeCrumb").textContent = item[0];
+          document.getElementById("campaignTitle").textContent = item[0];
+          document.getElementById("campaignDesc").textContent = item[1];
+        }, { once: false });
+      });
+    }
+
+    document.querySelectorAll("[data-lang-choice]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const choice = btn.dataset.langChoice;
+        if (choice === "en") {
+          document.documentElement.dataset.lang = "en";
+        } else {
+          document.documentElement.removeAttribute("data-lang");
+        }
+        render();
+      });
+    });
+
+    function animateOpacity(element, from, to, duration = 500) {
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        element.style.opacity = String(from + (to - from) * eased);
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function setupFadeLoopVideos() {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.querySelectorAll("[data-fade-loop-video]").forEach(video => {
+        if (reduceMotion) {
+          video.style.opacity = "0.28";
+          return;
+        }
+
+        let fadingOut = false;
+        const fadeIn = () => animateOpacity(video, Number(video.style.opacity || 0), 0.52, 500);
+        const fadeOut = () => animateOpacity(video, Number(video.style.opacity || 0.52), 0, 500);
+
+        video.addEventListener("canplay", () => {
+          video.play().catch(() => {});
+          fadeIn();
+        }, { once: true });
+
+        video.addEventListener("timeupdate", () => {
+          if (!video.duration || fadingOut) return;
+          if (video.duration - video.currentTime <= 0.55) {
+            fadingOut = true;
+            fadeOut();
+          }
+        });
+
+        video.addEventListener("ended", () => {
+          video.style.opacity = "0";
+          window.setTimeout(() => {
+            video.currentTime = 0;
+            fadingOut = false;
+            video.play().then(fadeIn).catch(() => {});
+          }, 100);
+        });
+      });
+    }
+
+    function setupReveal() {
+      const targets = document.querySelectorAll("[data-reveal]");
+      if (!targets.length) return;
+      if (!("IntersectionObserver" in window)) {
+        targets.forEach(target => target.classList.add("is-visible"));
+        return;
+      }
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      }, { threshold: 0.16, rootMargin: "0px 0px -80px 0px" });
+
+      targets.forEach(target => observer.observe(target));
+    }
+
+    render();
+    setupFadeLoopVideos();
+    setupReveal();
+  </script>
+</body>
+</html>
