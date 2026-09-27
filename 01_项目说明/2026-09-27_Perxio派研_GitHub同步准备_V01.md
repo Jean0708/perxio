@@ -27,6 +27,8 @@
 - 1280×720 与 390×844：文档无横向溢出。
 - 初次检查发现缺少浏览器图标；补充内嵌图标后复测通过，控制台错误与 HTTP 失败均为零。
 - 本地验证服务器已关闭。
+- 源码、README、历史记录、截图和 `docs` 发布目录已成功上传至 `https://github.com/Jean0708/perxio`。
+- 本地 `main` 已跟踪 `origin/main`；源码与两份预览产物内容一致。
 
 ## 待完成
 
@@ -35,5 +37,6 @@
 - 远端初始 README 已保留至 `05_归档文件`。
 - 上传工作流因当前 OAuth 登录未包含 workflow 权限被 GitHub 拒绝；采用 `main` 的 `/docs` 分支发布，Actions 配置作为参考移至 `01_项目说明`。
 - 需在目标仓库启用 GitHub Pages 的 Deploy from a branch，选择 main 和 /docs。
-- 推送后检查线上部署记录与实际预览链接。
+- 浏览器控制连续超时，无法代为修改 Pages 设置；已向用户提供设置页与具体选项。
+- 待用户保存 Pages 设置后检查实际预览链接 `https://jean0708.github.io/perxio/`。
 - 当前为演示原型，没有真实后端、AI 或数据持久化。
